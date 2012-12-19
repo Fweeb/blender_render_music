@@ -25,7 +25,7 @@ bl_info = {
     "version": (0, 3, 1),
     "blender": (2, 62, 1),
     "location": "Properties > Render",
-    "warning": "Requires a build after 44810",
+    "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php?title=Extensions:2.6/Py/Scripts/Render/Render_Music",
     "tracker_url": "",
     "category": "Render"}
