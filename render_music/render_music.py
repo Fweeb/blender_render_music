@@ -26,12 +26,13 @@ handle = "" #XXX UGLY
 @persistent
 def play_music(scene):
     global handle
+    addon_prefs = bpy.context.user_preferences.addons[__package__].preferences
 
-    if scene.render_music.use_play:
+    if addon_prefs.use_play:
         if not hasattr(handle, "status") or (hasattr(handle, "status") and handle.status == False):
             print("Playing elevator music...")
             device = aud.device()
-            factory = aud.Factory(scene.render_music.playfile)
+            factory = aud.Factory(addon_prefs.playfile)
             handle = device.play(factory)
             handle.loop_count = -1
 
@@ -45,10 +46,11 @@ def kill_music(scene):
 
 @persistent
 def end_music(scene):
+    addon_prefs = bpy.context.user_preferences.addons[__package__].preferences
     
     kill_music(scene)
     
-    if scene.render_music.use_end:
+    if addon_prefs.use_end:
         device = aud.device()
-        factory = aud.Factory(scene.render_music.endfile)
+        factory = aud.Factory(addon_prefs.endfile)
         handle = device.play(factory)

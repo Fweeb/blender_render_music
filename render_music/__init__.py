@@ -22,8 +22,8 @@ bl_info = {
     "name": "Render Music",
     "description": "Plays music while rendering and a tone when rendering is complete",
     "author": "Jason van Gumster (Fweeb)",
-    "version": (0, 3, 1),
-    "blender": (2, 62, 1),
+    "version": (0, 4, 0),
+    "blender": (2, 66, 1),
     "location": "Properties > Render",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php?title=Extensions:2.6/Py/Scripts/Render/Render_Music",
@@ -37,11 +37,13 @@ else:
     from . import render_music
 
 import bpy, os
+from bpy.types import AddonPreferences
 
 
 # UI
 
-class RenderMusicProperties(bpy.types.PropertyGroup):
+class RenderMusicProperties(AddonPreferences):
+    bl_idname = __package__
     scriptdir = bpy.path.abspath(os.path.dirname(__file__))
 
     #XXX Music CC-by 3.0, Sam Brubaker, http://soundcloud.com/worldsday/elevator-music-loop
@@ -65,39 +67,32 @@ class RenderMusicProperties(bpy.types.PropertyGroup):
         description = "Enable the ability to play a sound when a render completes",
         default = True)
 
-
-def userpref_panel(self, context):
-    scn = context.scene
-
-    layout = self.layout
-    layout.separator()
-    split = layout.split(percentage = 0.7)
-    col = split.column()
-    colsplit = col.split(percentage = 0.95)
-    col1 = colsplit.split(percentage = 0.3)
-
-    sub = col1.column()
-    sub.prop(scn.render_music, "use_play", text = "Play Music")
-    sub.prop(scn.render_music, "use_end", text = "End Music")
-
-    sub = col1.column()
-    sub.prop(scn.render_music, "playfile", text = "")
-    sub.prop(scn.render_music, "endfile", text = "")
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="Render Music Preferences")
+        split = layout.split(percentage=0.3)
+        col = split.column()
+        col.prop(self, "use_play", text="Play Music")
+        col.prop(self, "use_end", text="End Music")
+        col = split.column()
+        col.prop(self, "playfile", text="")
+        col.prop(self, "endfile", text="")
 
 
 def render_panel(self, context):
+    user_prefs = context.user_preferences
+    addon_prefs = user_prefs.addons[__package__].preferences
+
     layout = self.layout
-    layout.prop(context.scene.render_music, "use_play")
-    layout.prop(context.scene.render_music, "use_end")
+    layout.prop(addon_prefs, "use_play")
+    layout.prop(addon_prefs, "use_end")
 
 
 # Registration
 
 def register():
     bpy.utils.register_class(RenderMusicProperties)
-    bpy.types.Scene.render_music = bpy.props.PointerProperty(type = RenderMusicProperties)
     bpy.types.RENDER_PT_render.append(render_panel)
-    bpy.types.USERPREF_PT_file.append(userpref_panel)
 
     bpy.app.handlers.render_pre.append(render_music.play_music)
     bpy.app.handlers.render_cancel.append(render_music.kill_music)
@@ -109,10 +104,7 @@ def unregister():
     bpy.app.handlers.render_cancel.remove(render_music.kill_music)
     bpy.app.handlers.render_pre.remove(render_music.play_music)
 
-    del bpy.types.Scene.render_music
-    bpy.types.USERPREF_PT_file.remove(userpref_panel)
     bpy.types.RENDER_PT_render.remove(render_panel)
-    bpy.utils.unregister_class(RenderMusicProperties)
 
 
 if __name__ == '__main__':
