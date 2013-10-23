@@ -94,6 +94,7 @@ def register():
     bpy.utils.register_class(RenderMusicProperties)
     bpy.types.RENDER_PT_render.append(render_panel)
 
+    bpy.types.RenderSettings.music_handle = None
     bpy.app.handlers.render_pre.append(render_music.play_music)
     bpy.app.handlers.render_cancel.append(render_music.kill_music)
     bpy.app.handlers.render_complete.append(render_music.end_music)
