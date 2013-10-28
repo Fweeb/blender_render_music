@@ -22,7 +22,7 @@ bl_info = {
     "name": "Render Music",
     "description": "Plays music while rendering and a tone when rendering is complete",
     "author": "Jason van Gumster (Fweeb)",
-    "version": (0, 4, 0),
+    "version": (0, 5, 0),
     "blender": (2, 66, 1),
     "location": "Properties > Render",
     "warning": "",
