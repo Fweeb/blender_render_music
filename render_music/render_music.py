@@ -24,14 +24,15 @@ from bpy.app.handlers import persistent
 @persistent
 def play_music(scene):
     handle = bpy.types.RenderSettings.music_handle
-    addon_prefs = bpy.context.user_preferences.addons[__package__].preferences
+    addon_prefs = bpy.context.preferences.addons[__package__].preferences
 
     if addon_prefs.use_play:
+        
         if not hasattr(handle, "status") or (hasattr(handle, "status") and handle.status == False):
             print("Playing elevator music...")
-            device = aud.device()
-            factory = aud.Factory(addon_prefs.playfile)
-            bpy.types.RenderSettings.music_handle = device.play(factory)
+            device = aud.Device()
+            sound = aud.Sound(addon_prefs.playfile)
+            bpy.types.RenderSettings.music_handle = device.play(sound)
             handle.loop_count = -1
 
 @persistent
@@ -45,11 +46,11 @@ def kill_music(scene):
 @persistent
 def end_music(scene):
     handle = bpy.types.RenderSettings.music_handle
-    addon_prefs = bpy.context.user_preferences.addons[__package__].preferences
+    addon_prefs = bpy.context.preferences.addons[__package__].preferences
     
     kill_music(scene)
     
     if addon_prefs.use_end:
-        device = aud.device()
-        factory = aud.Factory(addon_prefs.endfile)
-        bpy.types.RenderSettings.music_handle = device.play(factory)
+        device = aud.Device()
+        sound = aud.Sound(addon_prefs.endfile)
+        bpy.types.RenderSettings.music_handle = device.play(sound)
