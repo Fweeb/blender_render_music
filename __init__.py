@@ -104,7 +104,7 @@ def unregister():
     bpy.app.handlers.render_cancel.remove(render_music.kill_music)
     bpy.app.handlers.render_pre.remove(render_music.play_music)
 
-    bpy.types.RENDER_PT_render.remove(render_panel)
+    bpy.types.RENDER_PT_context.remove(render_panel)
     bpy.utils.unregister_class(RenderMusicProperties)
 
 
